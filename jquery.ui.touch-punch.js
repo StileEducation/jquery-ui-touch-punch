@@ -1,8 +1,9 @@
 /*!
- * jQuery UI Touch Punch 0.2.3
+ * jQuery UI Touch Punch 0.2.3w - WPXP Edition
  *
  * Copyright 2011–2014, Dave Furfero
  * Dual licensed under the MIT or GPL Version 2 licenses.
+ * WPXP Edition - by Manuel Gumpinger
  *
  * Depends:
  *  jquery.ui.widget.js
@@ -21,7 +22,9 @@
   var mouseProto = $.ui.mouse.prototype,
       _mouseInit = mouseProto._mouseInit,
       _mouseDestroy = mouseProto._mouseDestroy,
-      touchHandled;
+      startX, startY,
+      touchHandled,
+      touchMoved;
 
   /**
    * Simulate a mouse event based on a corresponding touch event
@@ -80,7 +83,11 @@
     touchHandled = true;
 
     // Track movement to determine if interaction was a click
-    self._touchMoved = false;
+    touchMoved = false;
+
+    // Track starting event
+    startX = event.originalEvent.touches[0].screenX;
+    startY = event.originalEvent.touches[0].screenY;
 
     // Simulate the mouseover event
     simulateMouseEvent(event, 'mouseover');
@@ -103,8 +110,17 @@
       return;
     }
 
+    // Ignore event if no change in position from starting event
+    var endX = event.originalEvent.touches[0].screenX,
+        endY = event.originalEvent.touches[0].screenY;
+
+    if( startX >= endX-2 && startX <= endX+2 && startY >= endY-2 && startY <= endY+2) {
+      touchMoved = false;
+      return;
+    }
+
     // Interaction was not a click
-    this._touchMoved = true;
+    touchMoved = true;
 
     // Simulate the mousemove event
     simulateMouseEvent(event, 'mousemove');
@@ -128,7 +144,7 @@
     simulateMouseEvent(event, 'mouseout');
 
     // If the touch interaction did not move, it should trigger a click
-    if (!this._touchMoved) {
+    if (!touchMoved) {
 
       // Simulate the click event
       simulateMouseEvent(event, 'click');
