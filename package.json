@@ -13,7 +13,7 @@
 
   "version": "0.2.5",
 
-  "main": "dist/release/jquery.ui.touch-punch.js",
+  "main": "jquery.ui.touch-punch.js",
 
   "license": "MIT"
 
